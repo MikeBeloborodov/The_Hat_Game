@@ -54,7 +54,7 @@ export default defineComponent({
         .post("api/v1/player/", form)
         .then((res) => {
           store.commit("setUsername", form.username);
-										router.push('/game')
+          router.push("/game");
         })
         .catch((error) => {
           if (

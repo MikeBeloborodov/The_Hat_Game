@@ -1,11 +1,16 @@
 <template>
   <NavbarComp @logout="logout" />
-  <my-message
-    @closeMessage="closeMessage"
-    :messages="error_messages"
-    v-if="showErrors"
-    class="is-danger"
-  />
+  <section class="section">
+    <my-message
+      @closeMessage="closeMessage"
+      :messages="error_messages"
+      v-if="showErrors"
+      class="is-danger"
+    />
+				<div class="box">
+						<p class="title is-size-6">Текущие игры:</p>	
+				</div>
+  </section>
 </template>
 
 <script lang="ts">
@@ -22,6 +27,8 @@ export default defineComponent({
     //Tools
     const store = useStore();
     const router = useRouter();
+
+				// Game sessions
 
     // Player interaction
     const logout = () => {

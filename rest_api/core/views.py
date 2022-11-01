@@ -53,3 +53,13 @@ def player_logout(request):
             'error_message': 'Такого игрока не существует'
         }
         return Response(context, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET', 'POST', 'DELETE'])
+def game_session(request):
+    if request.method == 'GET':
+        sessions = GameSession.objects.all()
+        serializer = GameSessionSerializer(sessions, many=True)
+        context = {
+            'game_sessions': serializer.data
+        }
+        return Response(context, status=status.HTTP_200_OK)

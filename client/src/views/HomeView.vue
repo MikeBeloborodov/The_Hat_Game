@@ -16,7 +16,7 @@
         <label class="label"> Введите имя, чтобы начать играть </label>
         <my-input v-model="username" />
         <div class="buttons is-right">
-          <my-button @click="loginUser" class="is-primary mt-3"
+          <my-button @click="registerUser" class="is-primary mt-3"
             >Принять</my-button
           >
         </div>
@@ -27,17 +27,45 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
+import axios from "axios";
 
 export default defineComponent({
   name: "HomeView",
   components: {},
   setup() {
+    // Tools
+    const store = useStore();
+    const router = useRouter();
+
     // User interaction
     const username = ref("");
-    const loginUser = () => {
+    const registerUser = () => {
+      closeMessage();
       if (!username.value) {
         toggleErrors(["Заполните поле."]);
+        return;
       }
+      const form = {
+        username: username.value,
+      };
+      axios
+        .post("api/v1/player/", form)
+        .then((res) => {
+          store.commit("setUsername", form.username);
+										router.push('/game')
+        })
+        .catch((error) => {
+          if (
+            error.response.data.error_message.username[0] ==
+            "player with this username already exists."
+          ) {
+            toggleErrors(["Такое имя уже занято."]);
+          } else {
+            toggleErrors(error.message);
+          }
+        });
       username.value = "";
     };
 
@@ -56,7 +84,7 @@ export default defineComponent({
 
     return {
       username,
-      loginUser,
+      registerUser,
       error_messages,
       showErrors,
       toggleErrors,

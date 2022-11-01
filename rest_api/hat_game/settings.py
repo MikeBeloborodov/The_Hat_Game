@@ -31,7 +31,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-CORS_ALLOWED_ORIGINS_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
 

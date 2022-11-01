@@ -53,20 +53,23 @@ export default defineComponent({
       axios
         .post("api/v1/player/", form)
         .then((res) => {
+          console.log(res);
           store.commit("setUsername", form.username);
           router.push("/game");
+          username.value = "";
         })
         .catch((error) => {
-          if (
-            error.response.data.error_message.username[0] ==
-            "player with this username already exists."
-          ) {
-            toggleErrors(["Такое имя уже занято."]);
-          } else {
-            toggleErrors(error.message);
+          console.log(error);
+          try {
+            const error_payload = error.response.data.error_message;
+            toggleErrors([error_payload]);
+          } catch (err) {
+            console.log(err);
+            toggleErrors(["Network error"]);
+          } finally {
+            username.value = "";
           }
         });
-      username.value = "";
     };
 
     // Error messages

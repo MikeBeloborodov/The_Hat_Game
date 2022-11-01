@@ -7,6 +7,7 @@ class Team(models.Model):
 class Player(models.Model):
     username = models.CharField(max_length=100, unique=True)
     team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True, blank=True)
+    is_active = models.BooleanField(default=False)
 
 class GameSession(models.Model):
     team1 = models.OneToOneField(Team, on_delete=models.CASCADE, related_name="team1")

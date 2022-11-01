@@ -16,7 +16,7 @@
         <label class="label"> Введите имя, чтобы начать играть </label>
         <my-input v-model="username" />
         <div class="buttons is-right">
-          <my-button @click="registerUser" class="is-primary mt-3"
+          <my-button @click="registerUser" class="is-info mt-3"
             >Принять</my-button
           >
         </div>
@@ -53,7 +53,6 @@ export default defineComponent({
       axios
         .post("api/v1/player/", form)
         .then((res) => {
-          console.log(res);
           store.commit("setUsername", form.username);
           router.push("/game");
           username.value = "";

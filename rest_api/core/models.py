@@ -9,6 +9,7 @@ class Player(models.Model):
     username = models.CharField(max_length=100, unique=True)
     team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True, blank=True)
     is_active = models.BooleanField(default=False)
+    game_session = models.ForeignKey('GameSession', on_delete=models.CASCADE, null=True)
 
 class GameSession(models.Model):
     class Round(models.TextChoices):
@@ -19,12 +20,12 @@ class GameSession(models.Model):
     owner = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="session_owner")
     team1 = models.OneToOneField(Team, on_delete=models.CASCADE, related_name="team1")
     team2 = models.OneToOneField(Team, on_delete=models.CASCADE, related_name="team2")
-    players = models.ManyToManyField(Player)
     current_round = models.CharField(
         max_length=2,
         choices=Round.choices,
         default=Round.ROUND_1
     )
+    words_per_player = models.IntegerField(default=0)
 
 class Word(models.Model):
     class WordStatus(models.TextChoices):

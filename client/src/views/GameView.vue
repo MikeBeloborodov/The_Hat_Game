@@ -1,4 +1,12 @@
 <template>
+  <my-modal
+    class=""
+    title="Создать игру"
+    @closeModal="toggleModal"
+    :showModal="showModal"
+  >
+    <NewSession @submitForm="submitForm" />
+  </my-modal>
   <NavbarComp @logout="logout" />
   <section class="section">
     <my-message
@@ -7,28 +15,118 @@
       v-if="showErrors"
       class="is-danger"
     />
-				<div class="box">
-						<p class="title is-size-6">Текущие игры:</p>	
-				</div>
+    <div class="box">
+      <p class="title is-size-4">Текущие игры:</p>
+      <div v-if="game_sessions">
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          "
+          class="mb-3"
+          v-for="game in game_sessions"
+          :key="game.id"
+        >
+          <p class="is-size-5" v-if="game.owner.username.length > 16">
+            <strong>{{ game.owner.username.slice(0, 17) + "..." }}</strong>
+          </p>
+          <p class="is-size-5" v-else>
+            <strong>{{ game.owner.username }}</strong>
+          </p>
+          <my-button class="is-primary">Зайти</my-button>
+        </div>
+      </div>
+      <div v-else>
+        <p>В данный момент игр нет.</p>
+      </div>
+      <div class="buttons is-centered mt-5">
+        <my-button class="is-info" @click="createSession">Создать</my-button>
+        <my-button
+          :class="{ 'is-loading': refreshLoading }"
+          @click="refreshSessions"
+          >Обновить</my-button
+        >
+      </div>
+    </div>
   </section>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, onBeforeMount, ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import NavbarComp from "@/components/NavbarComp.vue";
+import NewSession from "@/components/NewSession.vue";
+import NewSessionInterface from "@/interfaces/NewSessionInterface";
 import axios from "axios";
+
+function sleep(time: number) {
+  return new Promise((r) => setTimeout(r, time));
+}
+
 export default defineComponent({
   components: {
     NavbarComp,
+    NewSession,
   },
   setup() {
     //Tools
     const store = useStore();
     const router = useRouter();
 
-				// Game sessions
+    // Before mount hook
+    onBeforeMount(() => {
+      // load game sessions
+      axios
+        .get("api/v1/game_session/")
+        .then((res) => {
+          game_sessions.value = res.data.game_sessions;
+        })
+        .catch((error) => {
+          console.log(error);
+          toggleErrors([error.message]);
+        });
+    });
+
+    // Game sessions
+    const game_sessions = ref([]);
+    const createSession = () => {
+      showModal.value = true;
+    };
+    const showModal = ref(false);
+    const toggleModal = () => {
+      showModal.value = !showModal.value;
+    };
+    const refreshLoading = ref(false);
+    const refreshSessions = async () => {
+      refreshLoading.value = true;
+      await sleep(500);
+      axios
+        .get("api/v1/game_session/")
+        .then((res) => {
+          game_sessions.value = res.data.game_sessions;
+        })
+        .catch((error) => {
+          console.log(error);
+          toggleErrors([error.message]);
+        })
+        .finally(() => {
+          refreshLoading.value = false;
+        });
+    };
+    const submitForm = (form: NewSessionInterface) => {
+      showModal.value = false;
+      axios
+        .post("api/v1/game_session/", form)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((error) => {
+          console.log(error);
+          toggleErrors([error.message]);
+        });
+    };
 
     // Player interaction
     const logout = () => {
@@ -38,7 +136,6 @@ export default defineComponent({
       axios
         .post("api/v1/player_logout/", form)
         .then((res) => {
-          console.log(res);
           router.push("/");
         })
         .catch((error) => {
@@ -66,7 +163,20 @@ export default defineComponent({
       showErrors.value = false;
     };
 
-    return { logout, error_messages, showErrors, toggleErrors, closeMessage };
+    return {
+      logout,
+      error_messages,
+      showErrors,
+      toggleErrors,
+      closeMessage,
+      game_sessions,
+      showModal,
+      toggleModal,
+      createSession,
+      refreshSessions,
+      refreshLoading,
+      submitForm,
+    };
   },
 });
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="modal" :class="{'is-active': showModal}">
+  <div class="modal" :class="{ 'is-active': showModal }">
     <div @click="$emit('closeModal')" class="modal-background"></div>
     <div class="modal-card">
       <header class="modal-card-head">
@@ -19,7 +19,7 @@ export default defineComponent({
   name: "my-modal",
   props: {
     title: String,
-				showModal: Boolean
+    showModal: Boolean,
   },
 });
 </script>

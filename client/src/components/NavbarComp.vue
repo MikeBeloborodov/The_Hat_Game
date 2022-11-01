@@ -1,5 +1,5 @@
 <template>
-  <div class="navbar is-info">
+  <div class="navbar has-shadow is-info">
     <div class="navbar-brand">
       <div class="navbar-item">
         <p class="is-size-4">Шляпа</p>

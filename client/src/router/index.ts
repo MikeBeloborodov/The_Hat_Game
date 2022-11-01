@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import HomeView from "../views/HomeView.vue";
+import SessionView from "@/views/SessionView.vue";
 import GameView from "@/views/GameView.vue";
 import store from "@/store";
 
@@ -8,6 +9,14 @@ const routes: Array<RouteRecordRaw> = [
     path: "/",
     name: "home",
     component: HomeView,
+  },
+  {
+    path: "/sessions",
+    name: "sessions",
+    component: SessionView,
+    meta: {
+      requireLogin: true,
+    },
   },
   {
     path: "/game",

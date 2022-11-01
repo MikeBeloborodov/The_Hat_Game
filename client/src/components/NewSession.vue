@@ -41,12 +41,12 @@ export default defineComponent({
       words_per_player: 10,
     });
     const submitForm = () => {
-						const form = {
-								username: session_form.value.username,
-								team1: session_form.value.team1,
-								team2: session_form.value.team2,
-								words_per_player: session_form.value.words_per_player
-						}
+      const form = {
+        username: session_form.value.username,
+        team1: session_form.value.team1,
+        team2: session_form.value.team2,
+        words_per_player: session_form.value.words_per_player,
+      };
       emit("submitForm", form);
       session_form.value.team1 = "";
       session_form.value.team2 = "";

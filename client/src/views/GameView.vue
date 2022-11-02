@@ -10,7 +10,7 @@
     <div class="columns" v-if="game_session.team1">
       <div class="column">
         <div class="box">
-          <p class="title is-size-6 has-text-centered">Команда #1</p>
+          <p class="title is-size-5 has-text-centered">Команда #1</p>
           <div
             style="
               display: flex;
@@ -20,23 +20,30 @@
             class="mb-3"
           >
             <div>
-              <p v-if="game_session.team1.name.length > 17">
+              <p v-if="game_session.team1.name.length > 17" class="is-size-5">
                 <strong>{{
-                  game_session.team1.name.slice(0, 17) + "..."
+                  game_session.team1.name.slice(0, 15) + "..."
                 }}</strong>
               </p>
-              <p v-else>
+              <p v-else class="is-size-5">
                 <strong>{{ game_session.team1.name }}</strong>
               </p>
-              <p>Очки: {{ game_session.team1.points }}</p>
-              <div>
-                <p>Игроки:</p>
-                <span
-                  v-for="player in game_session.team1.players"
-                  :key="player.username"
-                >
-                  {{ player.username + " " }}
-                </span>
+              <p class="is-size-5">Очки: {{ game_session.team1.points }}</p>
+              <div class="content">
+                <p class="is-size-5">Игроки:</p>
+                <ul>
+                  <li
+                    class="has-text-info is-size-5"
+                    v-for="player in game_session.team1.players"
+                    :key="player.username"
+                  >
+                    {{
+                      player.username.length > 15
+                        ? player.username.slice(0, 15) + "..."
+                        : player.username
+                    }}
+                  </li>
+                </ul>
               </div>
             </div>
             <my-button
@@ -55,7 +62,7 @@
       </div>
       <div class="column">
         <div class="box">
-          <p class="title is-size-6 has-text-centered">Команда #2</p>
+          <p class="title is-size-5 has-text-centered">Команда #2</p>
           <div
             style="
               display: flex;
@@ -65,23 +72,30 @@
             class="mb-3"
           >
             <div>
-              <p v-if="game_session.team2.name.length > 17">
+              <p v-if="game_session.team2.name.length > 17" class="is-size-5">
                 <strong>{{
-                  game_session.team2.name.slice(0, 17) + "..."
+                  game_session.team2.name.slice(0, 15) + "..."
                 }}</strong>
               </p>
-              <p v-else>
+              <p v-else class="is-size-5">
                 <strong>{{ game_session.team2.name }}</strong>
               </p>
-              <p>Очки: {{ game_session.team2.points }}</p>
-              <div>
-                <p>Игроки:</p>
-                <span
-                  v-for="player in game_session.team2.players"
-                  :key="player.username"
-                >
-                  {{ player.username + " " }}
-                </span>
+              <p class="is-size-5">Очки: {{ game_session.team2.points }}</p>
+              <div class="content">
+                <p class="is-size-5">Игроки:</p>
+                <ul>
+                  <li
+                    class="has-text-info is-size-5"
+                    v-for="player in game_session.team2.players"
+                    :key="player.username"
+                  >
+                    {{
+                      player.username.length > 15
+                        ? player.username.slice(0, 15) + "..."
+                        : player.username
+                    }}
+                  </li>
+                </ul>
               </div>
             </div>
             <my-button

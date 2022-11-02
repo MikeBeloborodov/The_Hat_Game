@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 class Team(models.Model):
     name = models.CharField(max_length=100)
     points = models.IntegerField(default=0)
+    players = models.ManyToManyField('Player', related_name='team_players')
 
 class Player(models.Model):
     username = models.CharField(max_length=100, unique=True)
@@ -13,6 +14,7 @@ class Player(models.Model):
 
 class GameSession(models.Model):
     class Round(models.TextChoices):
+        PRE_GAME = 'PG', _('Pre game')
         ROUND_1 = 'R1', _('Round 1')
         ROUND_2 = 'R2', _('Round 2')
         ROUND_3 = 'R3', _('Round 3')
@@ -23,7 +25,7 @@ class GameSession(models.Model):
     current_round = models.CharField(
         max_length=2,
         choices=Round.choices,
-        default=Round.ROUND_1
+        default=Round.PRE_GAME
     )
     words_per_player = models.IntegerField(default=0)
 

@@ -19,9 +19,10 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/game",
+    path: "/game/:id",
     name: "game",
     component: GameView,
+				props: true,
     meta: {
       requireLogin: true,
     },

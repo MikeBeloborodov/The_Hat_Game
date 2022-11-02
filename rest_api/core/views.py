@@ -7,6 +7,22 @@ from .serializers import PlayerSerializer, TeamSerializer, GameSessionSerializer
 
 @api_view(['GET', 'POST', 'DELETE'])
 def player(request, pk=0):
+    
+    if request.method == 'GET':
+        username = request.GET.get('q')
+        try:
+            player = Player.objects.get(username=username)
+            serializer = PlayerSerializer(player)
+            context = {
+                'player': serializer.data
+            }
+            return Response(context, status=status.HTTP_200_OK)
+        except Player.DoesNotExist:
+            context = {
+                'error_message': 'Такого игрока не существует.'
+            }
+            return Response(context, status=status.HTTP_404_NOT_FOUND)
+
     if request.method == 'POST':
         username = request.data['username']
         try:
@@ -55,15 +71,29 @@ def player_logout(request):
         return Response(context, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET', 'POST', 'DELETE'])
-def game_session(request):
+def game_session(request, pk=0):
 
     if request.method == 'GET':
-        sessions = GameSession.objects.all()
-        serializer = GameSessionSerializer(sessions, many=True)
-        context = {
-            'game_sessions': serializer.data
-        }
-        return Response(context, status=status.HTTP_200_OK)
+        if pk == 0:
+            sessions = GameSession.objects.all()
+            serializer = GameSessionSerializer(sessions, many=True)
+            context = {
+                'game_sessions': serializer.data
+            }
+            return Response(context, status=status.HTTP_200_OK)
+        else:
+            try:
+                session = GameSession.objects.get(id=pk)
+                serializer = GameSessionSerializer(session)
+                context = {
+                    'game_session': serializer.data
+                }
+                return Response(context, status=status.HTTP_200_OK)
+            except GameSession.DoesNotExist:
+                context = {
+                    'error_message': "Такой игры не существует."
+                }
+                return Response(context, status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'POST':
         team1_name = request.data['team1']
@@ -129,3 +159,52 @@ def game_session(request):
                 'error_message': "Такой игры нет."
             }
             return Response(context, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['POST', 'DELETE'])
+def teams(request, pk=0):
+    if request.method == 'POST':
+        if request.data['method'] == "join":
+            username = request.data['username']
+            team_name = request.data['team_name']
+            try:
+                player = Player.objects.get(username=username)
+                if player.team != None:
+                    context = {
+                        'error_message': "Вы уже состоите в команде."
+                    }
+                    return Response(context, status=status.HTTP_400_BAD_REQUEST)
+                team = Team.objects.get(name=team_name)
+                team.players.add(player)
+                team.save()
+                player.team = team
+                player.save()
+                serializer = TeamSerializer(team)
+                context = {
+                    'team': serializer.data
+                }
+                return Response(context, status=status.HTTP_201_CREATED)
+            except Team.DoesNotExist:
+                context = {
+                    'error_message': 'Такой команды или игрока не существует.'
+                }
+                return Response(context, status=status.HTTP_404_NOT_FOUND)
+        else:
+            username = request.data['username']
+            team_name = request.data['team_name']
+            try:
+                player = Player.objects.get(username=username)
+                team = Team.objects.get(name=team_name)
+                team.players.remove(player)
+                team.save()
+                player.team = None
+                player.save()
+                context = {
+                    'message': "Игрок убран из команды."
+                }
+                return Response(context, status=status.HTTP_201_CREATED)
+            except Team.DoesNotExist:
+                context = {
+                    'error_message': 'Такой команды или игрока не существует.'
+                }
+                return Response(context, status=status.HTTP_404_NOT_FOUND)
+

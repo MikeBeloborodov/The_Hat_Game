@@ -34,7 +34,9 @@
           <p class="is-size-5" v-else>
             {{ game.owner.username }}
           </p>
-          <my-button class="is-primary">Зайти</my-button>
+          <my-button @click="openSession(game.id)" class="is-primary"
+            >Зайти</my-button
+          >
         </div>
       </div>
       <div v-else>
@@ -120,12 +122,15 @@ export default defineComponent({
       axios
         .post("api/v1/game_session/", form)
         .then((res) => {
-										refreshSessions()
+          refreshSessions();
         })
         .catch((error) => {
           console.log(error);
           toggleErrors([error.message]);
         });
+    };
+    const openSession = (game_id: number) => {
+      router.push({ name: "game", params: { id: game_id } });
     };
 
     // Player interaction
@@ -136,7 +141,7 @@ export default defineComponent({
       axios
         .post("api/v1/player_logout/", form)
         .then((res) => {
-										localStorage.removeItem('username')
+          localStorage.removeItem("username");
           router.push("/");
         })
         .catch((error) => {
@@ -177,6 +182,7 @@ export default defineComponent({
       refreshSessions,
       refreshLoading,
       submitForm,
+      openSession,
     };
   },
 });

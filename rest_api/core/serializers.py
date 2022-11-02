@@ -1,15 +1,18 @@
 from rest_framework.serializers import ModelSerializer
 from .models import Player, Team, GameSession
 
-class TeamSerializer(ModelSerializer):
-    class Meta:
-        model = Team
-        fields = ['name', 'points']
 
 class PlayerSerializer(ModelSerializer):
     class Meta:
         model = Player
-        fields = ['username']
+        fields = ['username', 'team']
+
+class TeamSerializer(ModelSerializer):
+    players = PlayerSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Team
+        fields = ['name', 'points', 'players', 'id']
 
 class GameSessionSerializer(ModelSerializer):
     team1 = TeamSerializer()
